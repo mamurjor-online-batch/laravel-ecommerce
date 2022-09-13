@@ -45,6 +45,19 @@ class ProductController extends Controller
         //validate rules
         $imageName = $this->imageUpload($request->file('feature_image'),'images/products/');
 
+        // gallery image upload
+        if($request->hasFile('gallery_image')){
+            foreach ($request->file('gallery_image') as $value) {
+                $fileEx = $value->getClientOriginalExtension();
+                $imageName = rand().time().'.'.$fileEx;
+                $value->move('images/products/gallery/',$imageName);
+                $imageArray[] = 'images/products/gallery/'.$imageName;
+                $imageNames = json_encode($imageArray);
+            }
+        }else{
+            $imageNames = null;
+        }
+
         Product::create([
             'user_id'        => Auth::id(),
             'category_id'    => $request->category,
@@ -57,6 +70,7 @@ class ProductController extends Controller
             'regular_price'  => $request->regular_price,
             'discount_price' => $request->discount_price,
             'feature_image'  => $imageName,
+            'gallery_image'  => $imageNames,
             'is_approved'    => $request->approved,
         ]);
 
@@ -83,10 +97,27 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductRequest $request, Product $product)
+    public function update(Request $request, Product $product)
     {
         //validate rules
         $imageName = $this->imageUpdate($request->file('feature_image'),'images/products/',$product->feature_image);
+
+        if ($request->hasFile('gallery_image')) {
+            // old image remove from storage
+            foreach (json_decode($product->gallery_image) as $value) {
+                file_exists($value) ? unlink($value) : false;
+            }
+
+            // gallery image update
+            foreach ($request->file('gallery_image') as $value) {
+                $fileEx = $value->getClientOriginalExtension();
+                $imageName = rand().time().'.'.$fileEx;
+                $value->move('images/products/gallery/',$imageName);
+                $imageArray[] = 'images/products/gallery/'.$imageName;
+                $imageNames = json_encode($imageArray);
+            }
+        }
+
 
         $product->update([
             'user_id'        => Auth::id(),
@@ -100,6 +131,7 @@ class ProductController extends Controller
             'regular_price'  => $request->regular_price,
             'discount_price' => $request->discount_price,
             'feature_image'  => $imageName,
+            'gallery_image'  => $imageNames,
             'is_approved'    => $request->approved,
         ]);
 

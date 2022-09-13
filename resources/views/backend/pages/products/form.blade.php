@@ -57,7 +57,7 @@
 
                                 <x-form.textbox type="file" required="required" name="feature_image" labelName="Feature Image" error="feature_image"/>
 
-                                <x-form.textbox type="file" required="required" name="gallery_image[]" labelName="Gallery Image" error="gallery_image"/>
+                                <x-form.textbox type="file" required="required" name="gallery_image[]" labelName="Gallery Image" error="gallery_image" multiple/>
 
                                 <x-form.selectbox required="required" name="approved" labelName="Approved" error="approved">
                                     <option value="0" @isset($product) {{ $product->approved == 0 ? 'selected' : '' }} @endisset>Pending</option>

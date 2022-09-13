@@ -16,6 +16,7 @@ class Controller extends BaseController
         if ($fileName) {
             $fileEx = $fileName->getClientOriginalExtension();
             $imageName = rand().time().'.'.$fileEx;
+            $imagePath = $folderName.$imageName;
             $fileName->move($folderName,$imageName);
 
             return $imageName;
@@ -24,10 +25,11 @@ class Controller extends BaseController
 
     public function imageUpdate($fileName,$folderName,$oldImage){
         if ($fileName) {
-            file_exists('images/products/'.$oldImage) ? unlink('images/products/'.$oldImage) : false;
+            file_exists($oldImage) ? unlink($oldImage) : false;
 
             $fileEx = $fileName->getClientOriginalExtension();
             $imagePath = rand().time().'.'.$fileEx;
+            $imagePath = $folderName.$imagePath;
             $fileName->move($folderName,$imagePath);
         }
         else{
